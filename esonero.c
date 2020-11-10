@@ -38,8 +38,9 @@ int main(void)
     {
         do
         {
-            printf("Inserisci una stringa da usare come chiave lunga almeno %lx caratteri\n", strlen(plaintext));
-            fgets(key, 128, stdin);
+            printf("\n\nInserisci una stringa da usare come chiave lunga almeno %lx caratteri\n", strlen(plaintext));
+            fgets(key, DIMENSIONE, stdin);
+            pulisci_input();
         } while (strlen(key) < strlen(plaintext));
     }
 
@@ -55,32 +56,28 @@ int main(void)
         return 1;
     }
 
-    // La stringa viene cifrata
+   // La stringa viene cifrata
     for (int i = 0; i < strlen(key); i++)
     {
-        criptata[i] = (char)(plaintext[i] ^ key[i]);
+        criptata[i] = plaintext[i] ^ key[i];
     }
 
     // La stringa viene decifrata
     for (int i = 0; i < strlen(key); i++)
     {
-        plainCalcolata[i] = (char)(key[i] ^ criptata[i]);
+        plainCalcolata[i] = key[i] ^ criptata[i];
     }
 
-    printf("Plaintext inserita: %s", plaintext);
-    printf("Key %s: %s", (scelta == 1 ? "inserita" : "generata"), key);
+    printf("\n\nPlaintext inserita: %s\n", plaintext);
+    printf("Key %s: %s\n", (scelta == 1 ? "inserita" : "generata"), key);
     printf("Cyper: %s\n", criptata);
-    printf("Plain calcolata: %s\n", plainCalcolata);
+    printf("Plaintext calcolata: %s\n", plainCalcolata);
 
     return 0;
 }
 
-// Sostituisce fflush che non funziona su linux, causa il problema di dover premere invio una volta di piu
+// Sostituisce fflush che non funziona con linux
 void pulisci_input()
 {
-    int c;
-    do
-    {
-        c = getchar();
-    } while (c != '\n' && c != EOF);
+    while (getchar() != '\n' && getchar() != EOF);
 }
