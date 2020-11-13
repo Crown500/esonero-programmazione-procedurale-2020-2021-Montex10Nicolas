@@ -7,77 +7,79 @@ void pulisci_input(void);
 
 int main(void)
 {
-    // Prendo la stringa dall'utente
-    const short DIMENSIONE = 128;
+    const short DIMENSIONE = 5;
     char plaintext[DIMENSIONE];
-    printf("Inserisci una stringa da cifrare (NON piu di %d caratteri)\n", DIMENSIONE);
-    fgets(plaintext, DIMENSIONE, stdin);
-    pulisci_input();
 
-    // Faccio scegliere come decidere la key
-    int scelta = 0;
     do
     {
-        printf("Puoi scegliere tra:\n");
-        printf("\t1) Inserire una stringa da utilizzare come chiave\n");
-        printf("\t2) Generare casualmente una chiave\n");
-        printf("Fai la tua scelta: ");
-        scanf("%d", &scelta);
-        pulisci_input();
-    } while (scelta < 1 || scelta > 2);
+        printf("Inserisci una stringa da cifrare (NON piu di %d caratteri)\n", DIMENSIONE);
+        fgets(plaintext, DIMENSIONE, stdin);
+	if (strlen(plaintext) == DIMENSIONE - 1) 
+		pulisci_input();
+        int scelta = 0;
 
-    // Inizializzo tutti i valori che mi serviranno
-    char key[DIMENSIONE];
-    char criptata[DIMENSIONE];
-    char plainCalcolata[DIMENSIONE];
-    time_t t;
-    srand((unsigned)time(&t));
-
-    // Controllo come ha deciso di proseguire e genero/faccio inserire la key
-    if (scelta == 1)
-    {
         do
         {
-            printf("\n\nInserisci una stringa da usare come chiave lunga almeno %lx caratteri\n", strlen(plaintext));
-            fgets(key, DIMENSIONE, stdin);
-            pulisci_input();
-        } while (strlen(key) < strlen(plaintext));
-    }
+            printf("Puoi scegliere tra:\n");
+            printf("\t1) Inserire una stringa da utilizzare come chiave\n");
+            printf("\t2) Generare casualmente una chiave\n");
+            printf("\t3) Termina il programma\n");
+            printf("Fai la tua scelta: ");
+            scanf("%d", &scelta);
+	    pulisci_input();
+        } while (scelta != 1 && scelta != 2 && scelta != 3);
 
-    else if (scelta == 2)
-    {
-        for (int i = 0; i < strlen(plaintext); i++)
+        // Inizializzo tutti i valori che mi serviranno
+        char key[DIMENSIONE];
+        char criptata[DIMENSIONE];
+        char plainCalcolata[DIMENSIONE];
+        time_t t;
+        srand((unsigned)time(&t));
+
+        if (scelta == 1)
         {
-            key[i] = rand() % 128;
+            do
+            {
+                printf("\n\nInserisci una stringa da usare come chiave lunga almeno %lx caratteri\n", strlen(plaintext) - 1);
+                fgets(key, DIMENSIONE, stdin);
+		if (strlen(key) >= DIMENSIONE - 1)
+			pulisci_input();
+            } while (strlen(key) < strlen(plaintext));
         }
-    }
-    else
-    {
-        return 1;
-    }
 
-   // La stringa viene cifrata
-    for (int i = 0; i < strlen(key); i++)
-    {
-        criptata[i] = plaintext[i] ^ key[i];
-    }
+        else if (scelta == 2)
+        {
+            for (int i = 0; i < strlen(plaintext) - 1; i++)
+            {
+                key[i] = rand() % 128;
+            }
+	    key[strlen(plaintext)] = '\0';
+        }
 
-    // La stringa viene decifrata
-    for (int i = 0; i < strlen(key); i++)
-    {
-        plainCalcolata[i] = key[i] ^ criptata[i];
-    }
+        else
+            return 0;
 
-    printf("\n\nPlaintext inserita: %s\n", plaintext);
-    printf("Key %s: %s\n", (scelta == 1 ? "inserita" : "generata"), key);
-    printf("Cyper: %s\n", criptata);
-    printf("Plaintext calcolata: %s\n", plainCalcolata);
+        // La stringa viene cifrata
+        for (int i = 0; i < strlen(key); i++)
+        {
+            criptata[i] = plaintext[i] ^ key[i];
+        }
 
-    return 0;
+        // La stringa viene decifrata
+        for (int i = 0; i < strlen(key); i++)
+        {
+            plainCalcolata[i] = key[i] ^ criptata[i];
+        }
+
+        printf("\n\nPlaintext inserita: %s\n", plaintext);
+        printf("Key %s: %s\n", (scelta == 1 ? "inserita" : "generata"), key);
+        printf("Cyper: %s\n", criptata);
+        printf("Plaintext calcolata: %s\n", plainCalcolata);
+    } while (1);
 }
 
 // Sostituisce fflush che non funziona con linux
 void pulisci_input()
 {
-    while (getchar() != '\n' && getchar() != EOF);
+    while (getchar() != '\n');
 }
