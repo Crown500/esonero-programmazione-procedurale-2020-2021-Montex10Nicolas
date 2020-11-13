@@ -7,7 +7,7 @@ void pulisci_input(void);
 
 int main(void)
 {
-    const short DIMENSIONE = 5;
+    const short DIMENSIONE = 128;
     char plaintext[DIMENSIONE];
 
     do
@@ -36,6 +36,7 @@ int main(void)
         time_t t;
         srand((unsigned)time(&t));
 
+	// Faccio scegliere la key
         if (scelta == 1)
         {
             do
@@ -47,6 +48,7 @@ int main(void)
             } while (strlen(key) < strlen(plaintext));
         }
 
+	// Genero la key
         else if (scelta == 2)
         {
             for (int i = 0; i < strlen(plaintext) - 1; i++)
